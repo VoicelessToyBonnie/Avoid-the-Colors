@@ -27,12 +27,13 @@ class particleTrail:
             particle.draw(surface)
 
 class Particle:
-    def __init__(self, pos, size, life, color, screen_width, screen_height):
-        self.pos = pos
+    def __init__(self, pos, size, life, color, direction, screen_width, screen_height):
+        self.pos = list(pos)
         self.size = size
         self.color = color
         self.age = 0
         self.life = life
+        self.direction = direction
         self.dead = False
         self.screen_width = screen_width
         self.screen_height = screen_height
