@@ -23,13 +23,13 @@ class particleTrail:
             particle.update(dt)
             x, y = particle.pos
             if self.direction == 'vertical':
-                particle.pos = (x, y + dt)
+                particle.pos = (x, y + 100 * dt)
             elif self.direction == 'horizontal':
-                particle.pos = (x + dt, y)
+                particle.pos = (x + 100 * dt, y)
             elif self.direction == 'diagonal':
-                particle.pos = (x + dt, y + dt)
+                particle.pos = (x + 70 * dt, y + 70 * dt)
             elif self.direction == 'random':
-                particle.pos = (x + random.choice([-1, 1]) * dt, y + random.choice([-1, 1]) * dt)
+                particle.pos = (x + random.choice([-100, 100]) * dt, y + random.choice([-100, 100]) * dt)
 
     def draw(self, surface):
         for particle in self.particles:
