@@ -1,8 +1,8 @@
 import pygame
-import time
 import random
+import time
 
-class particleTrail:
+class ParticleTrail:
     def __init__(self, pos, size, life, direction):
         self.pos = pos
         self.size = size
@@ -10,61 +10,47 @@ class particleTrail:
         self.particles = []
         self.direction = direction
 
-
-    def update(self, dt, screen_width, screen_height):
+    def update(self, dt):
         color = pygame.Color(random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
-        particle = Particle(self.pos, self.size, self.life, color, self.direction, screen_width, screen_height)
+        particle = Particle(self.pos, self.size, self.life, color)
         self.particles.append(particle)
         self._move_particles(dt)
         self.particles = [p for p in self.particles if not p.dead]
 
     def _move_particles(self, dt):
-         for particle in self.particles:
+        for particle in self.particles:
             particle.update(dt)
+            x, y = particle.pos
+            if self.direction == 'vertical':
+                particle.pos = (x, y + dt)
+            elif self.direction == 'horizontal':
+                particle.pos = (x + dt, y)
+            elif self.direction == 'diagonal':
+                particle.pos = (x + dt, y + dt)
+            elif self.direction == 'random':
+                particle.pos = (x + random.choice([-1, 1]) * dt, y + random.choice([-1, 1]) * dt)
 
     def draw(self, surface):
         for particle in self.particles:
             particle.draw(surface)
 
 class Particle:
-    def __init__(self, pos, size, life, color, direction, screen_width, screen_height):
-        self.pos = list(pos)
+    def __init__(self, pos, size, life, color):
+        self.pos = pos
         self.size = size
         self.color = color
         self.age = 0
         self.life = life
-        self.direction = direction
         self.dead = False
-        self.screen_width = screen_width
-        self.screen_height = screen_height
 
     def update(self, dt):
         self.age += dt
         if self.age > self.life:
             self.dead = True
 
-        if self.direction == 'vertical':
-            self.pos[1] += 100 * dt  
-            if self.pos[1] > self.screen_height:
-                self.dead = True
-        elif self.direction == 'horizontal':
-            self.pos[0] += 100 * dt
-            if self.pos[0] > self.screen_width:
-                self.dead = True
-        elif self.direction == 'diagonal':
-            self.pos[0] += 70 * dt
-            self.pos[1] += 70 * dt
-            if self.pos[0] > self.screen_width or self.pos[1] > self.screen_height:
-                self.dead = True
-        elif self.direction == 'random':
-            self.pos[0] += random.choice([-100, 100]) * dt
-            self.pos[1] += random.choice([-100, 100]) * dt
-            if self.pos[0] < 0 or self.pos[0] > self.screen_width or self.pos[1] < 0 or self.pos[1] > self.screen_height:
-                self.dead = True
-
     def draw(self, surface):
         if not self.dead:
-            pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)       
+            pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)
 
 class Player:
     def __init__(self, pos, size=20):
@@ -76,6 +62,7 @@ class Player:
         self.pos = mouse_pos
 
     def draw(self, surface):
+        """Draw the player as a circle on the screen."""
         pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)
 
 def check_collision(player, trails):
@@ -86,9 +73,9 @@ def check_collision(player, trails):
                 return True
     return False
 
-def game_over(screen, survival_time, high_score):
+def display_game_over(screen, survival_time, high_score):
     font = pygame.font.Font(None, 74)
-    game_over_text = font.render("Game Over!", True, (255, 255, 255)) 
+    game_over_text = font.render("Game Over!", True, (255, 255, 255))
     survival_text = font.render(f"Survival Time: {survival_time:.2f}s", True, (255, 255, 255))
     high_score_text = font.render(f"High Score: {high_score:.2f}s", True, (255, 255, 255))
     
@@ -108,47 +95,49 @@ def main():
     pygame.display.set_caption("Avoid the Colors")
     clock = pygame.time.Clock()
 
-    player = Player(pos=(screen_res[0]//2, screen_res[1]//2))
+    player = Player(pos=(screen_res[0] // 2, screen_res[1] // 2))
     trails = []
-    time_survived = 0
+    survival_time = 0
     high_score = 0
     running, game_active = True, True
 
     while running:
-        dt = clock.tick(FPS) / 1000.0 
+        dt = clock.tick(FPS) / 1000.0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
-                
+
         if game_active:
             player.update(pygame.mouse.get_pos())
-            time_survived += dt
+            survival_time += dt
 
-        if random.random() < 0.05:
-            direction = random.choice(['vertical', 'horizontal', 'diagonal', 'random'])
-            new_trail = particleTrail((random.randint(0, screen_res[0]), random.randint(0, screen_res[1])),
-                                  size=15, life=1, direction=direction)
-            trails.append(new_trail)
+            if random.random() < 0.05:
+                direction = random.choice(['vertical', 'horizontal', 'diagonal', 'random'])
+                new_trail = ParticleTrail((random.randint(0, screen_res[0]), random.randint(0, screen_res[1])),
+                                          size=15, life=1, direction=direction)
+                trails.append(new_trail)
 
-        for trail in trails:
-            trail.update(dt, screen_res[0], screen_res[1])
-        
+            for trail in trails:
+                trail.update(dt)
+            if check_collision(player, trails):
+                game_active = False
+                high_score = max(high_score, survival_time)
+
         screen.fill((0, 0, 0))
         if game_active:
             player.draw(screen)
             for trail in trails:
                 trail.draw(screen)
         else:
-            game_over(screen, time_survived, high_score)
-            time_survived = 0
+            display_game_over(screen, survival_time, high_score)
+            survival_time = 0
             game_active = True
-            trails.clear()
-        
-        pygame.display.flip()
+            trails.clear()  
 
+        pygame.display.flip()
 
     pygame.quit()
 
