@@ -101,6 +101,16 @@ def main():
     high_score = 0
     running, game_active = True
 
+    while running:
+        dt = clock.tick(FPS) / 1000.0 
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                running = False
+
+
     pygame.quit()
 
 if __name__ == "__main__":
