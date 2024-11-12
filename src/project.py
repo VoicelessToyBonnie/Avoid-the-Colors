@@ -3,7 +3,7 @@ import time
 import random
 
 class particleTrail:
-     def __init__(self, pos, size, life, direction):
+    def __init__(self, pos, size, life, direction):
         self.pos = pos
         self.size = size
         self.life = life
@@ -11,14 +11,14 @@ class particleTrail:
         self.direction = direction
 
 
-     def update(self, dt):
+    def update(self, dt):
         color = pygame.Color(random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
         particle = Particle(self.pos, self.size, self.life, color)
         self.particles.append(particle)
         self._move_particles(dt)
         self.particles = [p for p in self.particles if not p.dead]
 
-     def _move_particles(self, dt):
+    def _move_particles(self, dt):
         for particle in self.particles:
             particle.update(dt)
             x, y = particle.pos
@@ -31,7 +31,7 @@ class particleTrail:
             elif self.direction == 'random':
                 particle.pos = (x + random.choice([-1, 1]) * dt, y + random.choice([-1, 1]) * dt)
 
-     def draw(self, surface):
+    def draw(self, surface):
         for particle in self.particles:
             particle.draw(surface)
 
@@ -43,6 +43,15 @@ class Particle:
         self.age = 0
         self.life = life
         self.dead = False
+
+    def update(self, dt):
+        self.age += dt
+        if self.age > self.life:
+            self.dead = True
+
+    def draw(self, surface):
+        if not self.dead:
+            pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)
 
 class Player:
      def __init__(self, pos, size=20):
