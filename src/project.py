@@ -127,17 +127,14 @@ def main():
             player.update(pygame.mouse.get_pos())
             time_survived += dt
 
-            if random.random() < 0.05:
-                direction = random.choice(['vertical', 'horizontal', 'diagonal', 'random'])
-                new_trail = particleTrail((random.randint(0, screen_res[0]), random.randint(0, screen_res[1])),
-                                          size=15, life=1, direction=direction)
-                trails.append(new_trail)
+        if random.random() < 0.05:
+            direction = random.choice(['vertical', 'horizontal', 'diagonal', 'random'])
+            new_trail = particleTrail((random.randint(0, screen_res[0]), random.randint(0, screen_res[1])),
+                                  size=15, life=1, direction=direction)
+            trails.append(new_trail)
 
-            for trail in trails:
-                trail.update(dt)
-            if check_collision(player, trails):
-                game_active = False
-                high_score = max(high_score, time_survived)
+        for trail in trails:
+            trail.update(dt, screen_res[0], screen_res[1])
         
         screen.fill((0, 0, 0))
         if game_active:
