@@ -112,7 +112,7 @@ def main():
                 
         if game_active:
             player.update(pygame.mouse.get_pos())
-            survival_time += dt
+            time_survived += dt
 
             if random.random() < 0.05:
                 direction = random.choice(['vertical', 'horizontal', 'diagonal', 'random'])
