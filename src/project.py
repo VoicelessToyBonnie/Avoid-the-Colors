@@ -10,6 +10,31 @@ class particleTrail:
         self.particles = []
         self.direction = direction
 
+
+     def update(self, dt):
+        color = pygame.Color(random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
+        particle = Particle(self.pos, self.size, self.life, color)
+        self.particles.append(particle)
+        self._move_particles(dt)
+        self.particles = [p for p in self.particles if not p.dead]
+
+     def _move_particles(self, dt):
+        for particle in self.particles:
+            particle.update(dt)
+            x, y = particle.pos
+            if self.direction == 'vertical':
+                particle.pos = (x, y + dt)
+            elif self.direction == 'horizontal':
+                particle.pos = (x + dt, y)
+            elif self.direction == 'diagonal':
+                particle.pos = (x + dt, y + dt)
+            elif self.direction == 'random':
+                particle.pos = (x + random.choice([-1, 1]) * dt, y + random.choice([-1, 1]) * dt)
+
+     def draw(self, surface):
+        for particle in self.particles:
+            particle.draw(surface)
+
 class Particle:
     def __init__(self, pos, size, life, color):
         self.pos = pos
