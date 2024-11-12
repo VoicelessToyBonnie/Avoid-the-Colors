@@ -42,7 +42,7 @@ class Particle:
         self.age += dt
         if self.age > self.life:
             self.dead = True
-        
+
         if self.direction == 'vertical':
             self.pos[1] += 100 * dt  
             if self.pos[1] > self.screen_height:
