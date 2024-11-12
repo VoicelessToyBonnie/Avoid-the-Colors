@@ -95,6 +95,12 @@ def main():
     pygame.display.set_caption("Avoid the Colors")
     clock = pygame.time.Clock()
 
+    player = Player(pos=(screen_res[0]//2, screen_res[1]//2))
+    trails = []
+    time_survived = 0
+    high_score = 0
+    running, game_active = True
+
     pygame.quit()
 
 if __name__ == "__main__":
