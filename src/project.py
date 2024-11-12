@@ -109,6 +109,22 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
+                
+        if game_active:
+            player.update(pygame.mouse.get_pos())
+            survival_time += dt
+
+            if random.random() < 0.05:
+                direction = random.choice(['vertical', 'horizontal', 'diagonal', 'random'])
+                new_trail = particleTrail((random.randint(0, screen_res[0]), random.randint(0, screen_res[1])),
+                                          size=15, life=1, direction=direction)
+                trails.append(new_trail)
+
+            for trail in trails:
+                trail.update(dt)
+            if check_collision(player, trails):
+                game_active = False
+                high_score = max(high_score, survival_time)
 
 
     pygame.quit()
