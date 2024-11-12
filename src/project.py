@@ -125,6 +125,19 @@ def main():
             if check_collision(player, trails):
                 game_active = False
                 high_score = max(high_score, survival_time)
+        
+        screen.fill((0, 0, 0))
+        if game_active:
+            player.draw(screen)
+            for trail in trails:
+                trail.draw(screen)
+        else:
+            game_over(screen, time_survived, high_score)
+            time_survived = 0
+            game_active = True
+            trails.clear()
+        
+        pygame.display.flip()
 
 
     pygame.quit()
