@@ -11,47 +11,59 @@ class particleTrail:
         self.direction = direction
 
 
-    def update(self, dt):
+    def update(self, dt, screen_width, screen_height):
         color = pygame.Color(random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
-        particle = Particle(self.pos, self.size, self.life, color)
+        particle = Particle(self.pos, self.size, self.life, color, self.direction, screen_width, screen_height)
         self.particles.append(particle)
         self._move_particles(dt)
         self.particles = [p for p in self.particles if not p.dead]
 
     def _move_particles(self, dt):
-        for particle in self.particles:
+         for particle in self.particles:
             particle.update(dt)
-            x, y = particle.pos
-            if self.direction == 'vertical':
-                particle.pos = (x, y + 100 * dt)
-            elif self.direction == 'horizontal':
-                particle.pos = (x + 100 * dt, y)
-            elif self.direction == 'diagonal':
-                particle.pos = (x + 70 * dt, y + 70 * dt)
-            elif self.direction == 'random':
-                particle.pos = (x + random.choice([-100, 100]) * dt, y + random.choice([-100, 100]) * dt)
 
     def draw(self, surface):
         for particle in self.particles:
             particle.draw(surface)
 
 class Particle:
-    def __init__(self, pos, size, life, color):
+    def __init__(self, pos, size, life, color, screen_width, screen_height):
         self.pos = pos
         self.size = size
         self.color = color
         self.age = 0
         self.life = life
         self.dead = False
+        self.screen_width = screen_width
+        self.screen_height = screen_height
 
     def update(self, dt):
         self.age += dt
         if self.age > self.life:
             self.dead = True
+        
+        if self.direction == 'vertical':
+            self.pos[1] += 100 * dt  
+            if self.pos[1] > self.screen_height:
+                self.dead = True
+        elif self.direction == 'horizontal':
+            self.pos[0] += 100 * dt
+            if self.pos[0] > self.screen_width:
+                self.dead = True
+        elif self.direction == 'diagonal':
+            self.pos[0] += 70 * dt
+            self.pos[1] += 70 * dt
+            if self.pos[0] > self.screen_width or self.pos[1] > self.screen_height:
+                self.dead = True
+        elif self.direction == 'random':
+            self.pos[0] += random.choice([-100, 100]) * dt
+            self.pos[1] += random.choice([-100, 100]) * dt
+            if self.pos[0] < 0 or self.pos[0] > self.screen_width or self.pos[1] < 0 or self.pos[1] > self.screen_height:
+                self.dead = True
 
     def draw(self, surface):
         if not self.dead:
-            pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)
+            pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)       
 
 class Player:
     def __init__(self, pos, size=20):
