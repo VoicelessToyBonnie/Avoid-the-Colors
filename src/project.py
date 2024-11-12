@@ -73,6 +73,18 @@ def check_collision(player, trails):
                 return True
     return False
 
+def game_over(screen, survival_time, high_score):
+    font = pygame.font.Font(None, 74)
+    game_over_text = font.render("Game Over!", True, (255, 255, 255)) 
+    survival_text = font.render(f"Survival Time: {survival_time:.2f}s", True, (255, 255, 255))
+    high_score_text = font.render(f"High Score: {high_score:.2f}s", True, (255, 255, 255))
+    
+    screen.blit(game_over_text, (1920 // 2 - game_over_text.get_width() // 2, 1080 // 2 - 100))
+    screen.blit(survival_text, (1920 // 2 - survival_text.get_width() // 2, 1080 // 2))
+    screen.blit(high_score_text, (1920 // 2 - high_score_text.get_width() // 2, 1080 // 2 + 100))
+    pygame.display.flip()
+    pygame.time.delay(2000)
+
 def main():
     pygame.init()
 
