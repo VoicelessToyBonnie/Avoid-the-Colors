@@ -99,7 +99,7 @@ def main():
     trails = []
     time_survived = 0
     high_score = 0
-    running, game_active = True
+    running, game_active = True, True
 
     while running:
         dt = clock.tick(FPS) / 1000.0 
@@ -124,7 +124,7 @@ def main():
                 trail.update(dt)
             if check_collision(player, trails):
                 game_active = False
-                high_score = max(high_score, survival_time)
+                high_score = max(high_score, time_survived)
         
         screen.fill((0, 0, 0))
         if game_active:
