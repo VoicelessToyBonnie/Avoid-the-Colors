@@ -65,6 +65,14 @@ class Player:
     def draw(self, surface):
         pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)
 
+def check_collision(player, trails):
+    for trail in trails:
+        for particle in trail.particles:
+            if not particle.dead and (abs(player.pos[0] - particle.pos[0]) < player.size and
+                                      abs(player.pos[1] - particle.pos[1]) < player.size):
+                return True
+    return False
+
 def main():
     pygame.init()
 
