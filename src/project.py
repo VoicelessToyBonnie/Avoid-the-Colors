@@ -54,10 +54,16 @@ class Particle:
             pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)
 
 class Player:
-     def __init__(self, pos, size=20):
+    def __init__(self, pos, size=20):
         self.pos = pos
         self.size = size
         self.color = (255, 255, 255)
+
+    def update(self, mouse_pos):
+        self.pos = mouse_pos
+
+    def draw(self, surface):
+        pygame.draw.circle(surface, self.color, (int(self.pos[0]), int(self.pos[1])), self.size // 2)
 
 def main():
     pygame.init()
