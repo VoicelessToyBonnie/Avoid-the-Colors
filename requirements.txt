@@ -1,0 +1,2 @@
+All 3rd Party Pips Installed:
+pip pygame
